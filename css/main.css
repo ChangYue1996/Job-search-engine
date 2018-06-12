@@ -1,0 +1,260 @@
+	/* reset */
+	
+	html {
+	    font-family: '微软雅黑', 'consolas';
+	    background-image: linear-gradient(to top, #fddb92 0%, #d1fdff 100%);
+	}
+	
+	body, form {
+	    margin: 0;
+	}
+	/*为祖先元素设置宽高，以确保全屏可以填充到颜色*/
+	
+	html, body {
+	    width: 100%;
+	    /*使用auto，如果result数量少，撑不开div高度会出现留白*/
+	    /*使用100%，当result数量太多，超出之后背景没有颜色*/
+	    min-height: 100%;
+	}
+	
+	/*文字被选择时候的颜色，浏览器默认是蓝色，颜色有点冲，改如下*/
+	input::selection, p::selection {
+	    background: #ff7c7c;
+	}
+	
+	input::selection, p::-moz-selection {
+	    background: #ff7c7c;
+	}
+	
+	hr {
+	    border: 1px solid rgba(140, 118, 118, 0.34);
+	    margin: 20px 0;
+	}
+	
+	.container {
+	    /*background-image: linear-gradient(-20deg, #f794a4 0%, #fdd6bd 100%);*/
+	    width: 100%;
+	    height: 100%;
+	}
+	
+	.search_group {
+	    text-align: center;
+	    transition: .3s all;
+	    height: 41px;
+	    transform: translateY(200px);
+	}
+	/*	.search_group:hover{
+		box-shadow: 0 4px 11px 0 rgba(103, 67, 67, 0.48);
+	}*/
+	
+	.input_search {
+	    font-size: 1em;
+	    color: #f66666;
+	    font-family: '微软雅黑';
+	    font-weight:bold;
+	    border: none;
+	    outline: none;
+	    padding: 10px;
+	    transition: .3s all ease-in-out;
+	    width: 40%;
+	    background: rgba(0, 0, 0, 0.05);
+	}
+	
+	.input_search:focus {
+	    box-shadow: inset 7px 0 0px 0px #f66666, 1px 1px 8px rgba(247, 130, 130, 0.55);
+	    text-indent: 5px;
+	}
+	
+	::-webkit-scrollbar {
+	    width: 10px;
+	}
+	/*定义滚动条轨道颜色*/
+	
+	::-webkit-scrollbar-track {
+	    background-color: #FFF;
+	}
+	/*定义滑块颜色、圆角*/
+	
+	::-webkit-scrollbar-thumb {
+	    border-radius: 10px;
+	    background-color: #F66666;
+	}
+	
+	.btn_search {
+	    height: 100%;
+	    border: none;
+	    padding: 10px;
+	    background: #F66666;
+	    color: #fff;
+	    outline: none;
+	    cursor: pointer;
+	    transition: .3s all ease-in-out;
+	    margin-left: -5px;
+	    /*		
+	    input后面的按钮会出现2px的上下偏差，
+		这是由于box-sizing:border-box导致的，
+		所以要加上这个
+		*/
+	    vertical-align: top;
+	}
+	
+	.btn_search:hover {
+	    background: #ff8e8e;
+	}
+	
+	.logo {
+	    text-align: center;
+	}
+	
+	.logo p {
+	    padding-top: 20px;
+	    font-size: 120px;
+	    margin: 0;
+	    color: #f68084;
+
+	    /*为文字添加渐变效果，但在IE下并不支持，所以弃用之。不考虑兼容可以使用*/
+
+/*		text-shadow: 0px 0px 7px rgba(107, 107, 107, 0.38);
+	    	background-image: linear-gradient(-20deg, #f794a4 0%, #fdd6bd 100%);
+		-webkit-background-clip: text;
+	    -webkit-text-fill-color: transparent;
+	    text-shadow: 0px 0px 7px rgba(14, 14, 14, 0.05);
+*/
+	    user-select: none;
+	    cursor: default;
+	}
+	
+	.result_group {
+	    padding: 0 100px;
+	}
+	
+	.result_item {
+	    background: rgba(0, 0, 0, 0.05);
+	    margin: 20px;
+	    transition: .3s all ease-in-out;
+	    animation: DownSlideUp .5s;
+	    max-width: 800px;
+	    margin: 20px auto;
+	    font-weight:bold;
+	}
+	
+	.result_item:hover {
+	    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+	}
+	
+	.result_item:hover .item_header {
+	    background: #F66666;
+	    color: #f66666;
+	}
+	
+	.item_header {
+	    background: rgba(0, 0, 0, 0.05);
+	    padding: 1px;
+	    padding-left: 12px;
+	    transition: .3s all ease-in-out;
+	}
+	
+	.item_header a {
+	    display: block;
+	    color: white;
+	    text-decoration: none;
+	}
+	
+	.item_body {
+	    padding: 10px;
+	    line-height: 28px;
+	}
+	
+	.item_footer {
+	    padding: 1px;
+	    text-align: right;
+	}
+	
+	.item_text {
+	    margin: 8px;
+	    letter-spacing: 1.5px;
+	}
+	
+	.divider {
+	    opacity: 0;
+	}
+	
+	@keyframes DownSlideUp {
+	    0% {
+	        opacity: 0;
+	        transform: translateY(20px);
+	    }
+	    100% {
+	        opacity: 1;
+	        transform: translateY(0);
+	    }
+	}
+	
+	.Anim_DownSlideUp {
+	    animation: DownSlideUp .4s forwards;
+	}
+	
+	.alert_notFound {
+	    display: none;
+	}
+	/*Loading CSS Anim Start*/
+	
+	.spinner {
+	    margin: 125px auto;
+	    width: 50px;
+	    height: 60px;
+	    text-align: center;
+	    font-size: 10px;
+	    display: none;
+	}
+	
+	.spinner > div {
+	    background-color: #F66666;
+	    height: 100%;
+	    width: 6px;
+	    display: inline-block;
+	    border-radius: 5px;
+	    -webkit-animation: stretchdelay 1.2s infinite ease-in-out;
+	    animation: stretchdelay 1.2s infinite ease-in-out;
+	}
+	
+	.spinner .rect2 {
+	    -webkit-animation-delay: -1.1s;
+	    animation-delay: -1.1s;
+	}
+	
+	.spinner .rect3 {
+	    -webkit-animation-delay: -1.0s;
+	    animation-delay: -1.0s;
+	}
+	
+	.spinner .rect4 {
+	    -webkit-animation-delay: -0.9s;
+	    animation-delay: -0.9s;
+	}
+	
+	.spinner .rect5 {
+	    -webkit-animation-delay: -0.8s;
+	    animation-delay: -0.8s;
+	}
+	
+	@-webkit-keyframes stretchdelay {
+	    0%, 40%, 100% {
+	        -webkit-transform: scaleY(0.4)
+	    }
+	    20% {
+	        -webkit-transform: scaleY(1.0)
+	    }
+	}
+	
+	@keyframes stretchdelay {
+	    0%, 40%, 100% {
+	        transform: scaleY(0.4);
+	        -webkit-transform: scaleY(0.4);
+	    }
+	    20% {
+	        transform: scaleY(1.0);
+	        -webkit-transform: scaleY(1.0);
+	    }
+	}
+	/*Loading CSS Anim End*/

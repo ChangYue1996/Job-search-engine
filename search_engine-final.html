@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="./css/main.css">
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+</head>
+<body>
+<div class="container">
+	<div class="logo">
+		<p>lulala</p>
+	</div>
+	<div class="search_group" id="search_group">
+		<input placeholder="enter here to search" class="input_search" id="input_search" />
+		<button type="submit" class="btn_search" id="btn_search">Search</button>
+	</div>
+	
+	<hr class="divider" />
+
+	<!-- 使用Css3 动画来制作Loading -->
+	<div class="spinner">
+	  <div class="rect1"></div>
+	  <div class="rect2"></div>
+	  <div class="rect3"></div>
+	  <div class="rect4"></div>
+	  <div class="rect5"></div>
+	</div>
+
+	<div class="result_group">
+		<!-- 搜索结果显示的模板 -->
+		<!-- 		
+		<div class="result_item">
+			<div class="item_header">
+				<p class="item_text">text_header</p>
+			</div>
+			<div class="item_body">
+				<p class="item_text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae natus autem suscipit nesciunt magni illo quos commodi rerum tempore dolorum architecto velit quidem, animi quasi voluptatum, soluta repellendus. Corporis, ipsam.</p>
+			</div>
+			<div class="item_footer">
+				<p class="item_text">footer</p>
+			</div> 
+		-->
+	
+	</div>
+
+	<!-- 没有找到搜索结果的提示 -->
+	<div class="result_item alert_notFound" id="alert_notFound">
+		<div class="item_header">
+			<p class="item_text">没有找到搜索结果</p>
+		</div>
+		<div class="item_body">
+			<p class="item_text">你可以尝试使用其他关键词</p>
+		</div>
+	</div>
+
+	<!-- 与服务器通讯产生错误的提示 -->
+	<div class="result_item alert_notFound" id="alert_notConnect">
+		<div class="item_header">
+			<p class="item_text">与服务器通讯产生错误</p>
+		</div>
+		<div class="item_body">
+			<p class="item_text">若不是由于网络问题，那么可能是后台程序没有开启，或者发起Ajax的请求地址不正确，请重试。</p>
+		</div>
+	</div>
+</div>
+<script>
+	//按钮,搜索框的事件监听
+	$("#btn_search").click(function(){
+		sendAjax();
+	});
+
+	$("#input_search").on("focus",function(){
+		moveSearchUp();
+	});
+
+	$("#input_search").on("blur",function(){
+		//若没有搜索内容则使搜索框恢复初始位置
+		if($(".result_group").children().length==0){
+			moveSearchDown();
+		}
+	});
+
+	$("#input_search").on("input",function(){
+		//监听input的值是否产生变化
+		//如果是使用了输入法，input的值会出现一个空格，会触发一次
+		//所以要在sendAjax()中加入检查
+		//防止输入法在input中出英文而导致多次请求
+		// text=$("#input_search").val();
+		// if(escape(text).indexOf("%u")!=-1){
+		// 	sendAjax();
+		// 	console.log("hava");
+  //        }  else{
+  //        	console.log("no have");
+         // }
+         sendAjax();
+	});
+
+
+</script>
+<script>
+	function sendAjax(){
+		search_text=$("#input_search").val();		
+		//检查是否输入搜索内容
+		if(search_text==""||search_text==" "){
+			console.log("enter value is null");
+		}else{
+		
+		    // $.post("http://localhost:9200/test-index/" ,
+		    // 	{"query":{"match_phrase" :{"content":search_text}}},function(data){
+		    //     //var a = data.hits.hits[1]._source.content;
+		    //     a = data;
+		    //     alert(a);
+		    //     // a = a.toString();
+		    //     // var b = String(a);
+		    //     // alert(a);
+		    //     // alert(b);
+		        
+		    // });
+		    
+		    $.ajax({  
+   				type: "post", 
+   				url : "http://localhost:9200/search-index/test-type/_search",
+   				contentType: 'application/json',
+   				data:  JSON.stringify({query:{match_phrase :{content:search_text}}}),
+   				beforeSend:function(){
+					OpenAlertInfo(false);	//关闭错误提示
+					rmAlertNotFound();		//关闭上次未找到结果的提示
+					addLoadingAnim();		//加载Loading动画
+				},
+   				success: function (data) {  
+   					// var a = data.hits.hits[1]._source.content;
+   					// alert(a);
+   					addResult_item(data);	//添加搜索结果到页面
+   					rmLoadingAnim();		//移除Loading动画	
+					CheckHasResult();		//对结果检查，没有则显示“未找到结果”的提示
+
+	
+    			}  
+			}); 
+		    //alert(search_text);
+
+		}
+	}
+
+	function OpenAlertInfo(Status){
+		//显示与服务器连接产生的错误
+		//false 为隐藏
+		if(Status==false){
+			$("#alert_notConnect").addClass("alert_notFound");
+		}else{
+			$("#alert_notConnect").removeClass("alert_notFound");
+		}
+	}
+	function moveSearchUp(){
+		//使搜索框上移
+		$(".search_group").css("transform","translateY(0)");
+	}
+	function moveSearchDown(){
+		$(".search_group").css("transform","translateY(200px)");	
+	}
+	function addLoadingAnim(){
+		$(".spinner").css("display","block");
+		$("#btn_search").css("background","grey");
+	}
+	function rmLoadingAnim(){
+		$(".spinner").css("display","none");
+		$("#btn_search").css("background","#f66666");
+	}
+	function CheckHasResult(){
+		if($(".result_group").children().length==0){
+			//显示未找到结果
+			AddAlertNotFound();
+		}else{
+			//隐藏显示
+			rmAlertNotFound();
+		}
+	}
+	function AddAlertNotFound(){
+		$("#alert_notFound").removeClass("alert_notFound");
+	}
+	function rmAlertNotFound(){
+		$("#alert_notFound").addClass("alert_notFound");
+	}
+	function addResult_item(data) {
+		//添加动画效果，使得搜索框上移，出现分割线
+		moveSearchUp();
+		$(".divider").addClass("Anim_DownSlideUp");
+
+		//在显示新的结果之前，清空上次搜索结果
+		$(".result_group").empty();
+
+		// 对JSON数据进行遍历解析
+		var all_datas_JSON=data;
+		//var a = data.hits.hits[1]._source.content; 格式
+		for(var obj in all_datas_JSON.hits.hits){
+			var title = all_datas_JSON.hits.hits[obj]._source.title;
+			var linkText = all_datas_JSON.hits.hits[obj]._source.content;
+			var linkHref=all_datas_JSON.hits.hits[obj]._source.href;	//文章链接
+				// 用Js动态生成结果，DOM的创建操作
+				$(".result_group").append(["<div class=\"result_item\">",
+				"			<div class=\"item_body\">",
+				"				<p class=\"item_text\">"+title+"</p>",
+				"			</div>",
+				"			<div class=\"item_header\">",
+				"				<p class=\"item_text\"><a href="+linkHref+">"+linkText+"</a></p>",
+				"			</div>",
+				"			<div class=\"item_footer\">",
+				"				<p class=\"item_text\"></p>",
+				"			</div>",
+				"</div>"].join(""));
+
+			}
+		
+
+	// 	for(var i=0 ;i<all_datas_JSON.baike_datas.length;i++){
+	// 		var linkText= all_datas_JSON.baike_datas[i].linkText;
+	// 		var linkHref=all_datas_JSON.baike_datas[i].linkHref;
+	// 		var summary=all_datas_JSON.baike_datas[i].summary;
+	// 		$(".result_group").append();
+	// 	}
+	// 	
+	};
+</script>
+</body>
+</html>
